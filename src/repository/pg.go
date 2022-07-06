@@ -10,15 +10,21 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+
+	students "app/domain/students/models"
 )
 
 const (
 	host     = "localhost"
 	port     = 55000
 	user     = "postgres"
-	password = "postgrespw"
-	dbname   = "postgres"
+	password = "postgres"
+	dbname   = "study"
 )
+
+type MigrateTable interface {
+	TableName() string
+}
 
 type pgObj struct {
 	client *gorm.DB
@@ -32,6 +38,17 @@ func newPgClients() *pgObj {
 
 func (d *pgObj) GetClient() *gorm.DB {
 	return d.client
+}
+
+func (d *pgObj) AutoMigrate() {
+	if d.client.Migrator().HasTable(&students.Students{}) {
+		log.Printf("======> DB Auto Migrate: Migrate Table %s\n", (&students.Students{}).TableName())
+	}
+
+	if err := d.client.AutoMigrate(&students.Students{}); err != nil {
+		log.Printf("======> DB Auto Migrate: Create table %s failed\n", (&students.Students{}).TableName())
+		panic(err.Error())
+	}
 }
 
 func getDB() *gorm.DB {

@@ -17,6 +17,8 @@ func NewProvider() *Provider {
 	pg := newPgClients()
 	dbClient := pg.GetClient()
 
+	pg.AutoMigrate()
+
 	return &Provider{
 		Db:          dbClient,
 		StudentsDao: studentsDao.NewStudentsDao(dbClient),

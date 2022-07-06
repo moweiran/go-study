@@ -14,6 +14,7 @@ var ServiceComm *ServiceContext
 
 func NewServiceContext() *ServiceContext {
 	p := repository.NewProvider()
+
 	ServiceComm = &ServiceContext{
 		Provider: p,
 	}
